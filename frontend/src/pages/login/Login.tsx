@@ -2,11 +2,11 @@ import { useState } from "react";
 import "./Login.scss";
 
 const Login = () => {
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   console.log("aejkhfa");
   const handleLogin = () => {
-    // Handle login logic here
+
     console.log("Login clicked!");
   };
 
@@ -16,9 +16,9 @@ const Login = () => {
         <h2 className="title">Login</h2>
         <input
           type="text"
-          placeholder="Username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
         />
         <input
           type="password"

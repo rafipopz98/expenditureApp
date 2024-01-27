@@ -6,11 +6,16 @@ import { Application, Request, Response } from "express";
 import cors from "cors";
 import cookieparser from "cookie-parser";
 import { PORT } from "./config";
+import { dbConnection } from "./database/connection";
+import FinanceRepo from "./database/repository/finance";
+import FinanceService from "./service/finance";
+import { finacnceAPI } from "./api/routes/finance";
 const ExpressApp = (app: Application) => {
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
   app.use(cookieparser());
 
+  dbConnection();
   app.use(
     cors({
       origin: [
@@ -36,10 +41,13 @@ const ExpressApp = (app: Application) => {
 const start = () => {
   const userRepo = new UserRepository();
   const userService = new UserService(userRepo);
+  const financeRepo = new FinanceRepo();
+  const financeService = new FinanceService(financeRepo);
 
   const app = express();
   ExpressApp(app);
 
   userAPI(app, userService);
+  finacnceAPI(app, financeService);
 };
 start();

@@ -4,24 +4,30 @@ class UserController {
   userService: UserService;
   constructor(US: UserService) {
     this.userService = US;
+    this.userLogin = this.userLogin.bind(this);
   }
   public async userLogin(req: Request, res: Response) {
-    const { email, password } = req.body;
-    const data = await this.userService.userLogin({ email, password });
-    const statusCode = data?.success ? (data.error === null ? 200 : 404) : 500;
-    // res.cookie("accessUserToken", data.data?.token, {
-    //   httpOnly: true,
-    // });
-    return res.status(statusCode).json(data);
-  }
-  public async userRegistration(req: Request, res: Response) {
-    const { email, password } = req.body;
-    const data = await this.userService.userLogin({ email, password });
-    const statusCode = data?.success ? (data.error === null ? 200 : 404) : 500;
-    // res.cookie("accessUserToken", data.data?.token, {
-    //   httpOnly: true,
-    // });
-    return res.status(statusCode).json(data);
+    try {
+      const { email, password } = req.body;
+      const loginResult = await this.userService.userLogin({
+        email,
+        password,
+      });
+      const statusCode = loginResult?.success
+        ? loginResult.error === null
+          ? 200
+          : 401
+        : 500;
+      res.cookie("accessUserToken", loginResult?.data?.finalData.token, {
+        httpOnly: true,
+      });
+      return res.status(statusCode).json(loginResult?.data);
+    } catch (error) {
+      console.error("Error in userLogin controller:", error);
+      return res
+        .status(500)
+        .json({ success: false, data: null, error: "Internal Server Error" });
+    }
   }
 }
 export { UserController };
